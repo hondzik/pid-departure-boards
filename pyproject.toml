@@ -1,0 +1,10 @@
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+include = ["custom_components/pid_departure_boards/*"]
+
+[tool.coverage.report]
+show_missing = true
