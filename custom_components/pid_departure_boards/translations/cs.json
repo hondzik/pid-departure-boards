@@ -1,1 +1,139 @@
-{}
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "PID Departure Boards",
+        "description": "Zadejte API klíč Golemio. Vytvořit si ho můžete na {api_keys_url}.",
+        "data": {
+          "api_key": "API klíč"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Opětovné přihlášení",
+        "description": "Zadejte API klíč Golemio. Vytvořit si ho můžete na {api_keys_url}.",
+        "data": {
+          "api_key": "API klíč"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Neplatný API klíč.",
+      "cannot_connect": "Nelze se připojit k Golemio API.",
+      "unknown": "Neočekávaná chyba."
+    },
+    "abort": {
+      "already_configured": "Tento API klíč je již nastaven.",
+      "reauth_successful": "Opětovné přihlášení proběhlo úspěšně."
+    }
+  },
+  "config_subentries": {
+    "stop": {
+      "initiate_flow": {
+        "user": "Přidat zastávku"
+      },
+      "entry_type": "Zastávka",
+      "step": {
+        "user": {
+          "title": "Najít zastávku",
+          "description": "Zadejte (část) názvu zastávky, např. „Anděl“.",
+          "data": {
+            "query": "Název zastávky"
+          }
+        },
+        "pick": {
+          "title": "Vyberte zastávku",
+          "data": {
+            "stop_choice": "Zastávka"
+          }
+        },
+        "platform": {
+          "title": "Vyberte nástupiště",
+          "description": "Nástupiště zastávky „{stop_name}“ — každé obsluhuje jeden směr. Zobrazeno jako: nástupiště — cíle (linky).",
+          "data": {
+            "stop_id": "Nástupiště"
+          }
+        },
+        "routes": {
+          "title": "Linky",
+          "description": "Vyberte sledované linky. Prázdný výběr znamená všechny.",
+          "data": {
+            "routes": "Linky"
+          }
+        },
+        "settings": {
+          "title": "Nastavení",
+          "data": {
+            "name": "Název",
+            "limit": "Počet odjezdů",
+            "scan_interval": "Interval obnovy (sekundy, prázdné = výchozí)"
+          }
+        },
+        "reconfigure": {
+          "title": "Upravit zastávku",
+          "data": {
+            "routes": "Linky",
+            "limit": "Počet odjezdů",
+            "scan_interval": "Interval obnovy (sekundy, prázdné = výchozí)"
+          }
+        }
+      },
+      "error": {
+        "invalid_auth": "Neplatný API klíč.",
+        "cannot_connect": "Nelze se připojit k Golemio API.",
+        "no_results": "Žádná zastávka nenalezena."
+      },
+      "abort": {
+        "already_configured": "Tento API klíč je již nastaven.",
+        "reconfigure_successful": "Opětovné přihlášení proběhlo úspěšně."
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "description": "Jednotlivé zastávky mohou tento interval přepsat.",
+        "data": {
+          "scan_interval": "Výchozí interval obnovy (sekundy)"
+        }
+      }
+    }
+  },
+  "services": {
+    "refresh": {
+      "name": "Obnovit",
+      "description": "Okamžitě obnoví odjezdy (všechny zastávky, nebo jen vybrané).",
+      "fields": {
+        "entity_id": {
+          "name": "Senzory odjezdů",
+          "description": "Senzory k obnovení. Prázdné = všechny."
+        }
+      }
+    },
+    "get_departures": {
+      "name": "Získat odjezdy",
+      "description": "Vrátí aktuální odjezdy z nástupiště. Zadejte buď senzor, nebo GTFS ID zastávky.",
+      "fields": {
+        "entity_id": {
+          "name": "Senzor odjezdů",
+          "description": "Zastávka, linky a limit se převezmou z tohoto senzoru."
+        },
+        "stop_id": {
+          "name": "ID zastávky",
+          "description": "GTFS ID nástupiště, např. U1072Z101P."
+        },
+        "config_entry_id": {
+          "name": "Konfigurační záznam",
+          "description": "Záznam, jehož API klíč se použije (u ID zastávky). Výchozí je první."
+        },
+        "routes": {
+          "name": "Linky",
+          "description": "Pouze tyto linky (prázdné = všechny)."
+        },
+        "limit": {
+          "name": "Limit",
+          "description": "Maximální počet odjezdů."
+        }
+      }
+    }
+  }
+}

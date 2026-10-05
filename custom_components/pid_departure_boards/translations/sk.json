@@ -1,1 +1,139 @@
-{}
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "PID Departure Boards",
+        "description": "Zadajte API kľúč Golemio. Vytvoriť si ho môžete na {api_keys_url}.",
+        "data": {
+          "api_key": "API kľúč"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Opätovné prihlásenie",
+        "description": "Zadajte API kľúč Golemio. Vytvoriť si ho môžete na {api_keys_url}.",
+        "data": {
+          "api_key": "API kľúč"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Neplatný API kľúč.",
+      "cannot_connect": "Nepodarilo sa pripojiť ku Golemio API.",
+      "unknown": "Neočakávaná chyba."
+    },
+    "abort": {
+      "already_configured": "Tento API kľúč je už nastavený.",
+      "reauth_successful": "Opätovné prihlásenie prebehlo úspešne."
+    }
+  },
+  "config_subentries": {
+    "stop": {
+      "initiate_flow": {
+        "user": "Pridať zastávku"
+      },
+      "entry_type": "Zastávka",
+      "step": {
+        "user": {
+          "title": "Nájsť zastávku",
+          "description": "Zadajte (časť) názvu zastávky, napr. „Anděl“.",
+          "data": {
+            "query": "Názov zastávky"
+          }
+        },
+        "pick": {
+          "title": "Vyberte zastávku",
+          "data": {
+            "stop_choice": "Zastávka"
+          }
+        },
+        "platform": {
+          "title": "Vyberte nástupište",
+          "description": "Nástupištia zastávky „{stop_name}“ — každé obsluhuje jeden smer. Zobrazené ako: nástupište — ciele (linky).",
+          "data": {
+            "stop_id": "Nástupište"
+          }
+        },
+        "routes": {
+          "title": "Linky",
+          "description": "Vyberte sledované linky. Prázdny výber znamená všetky.",
+          "data": {
+            "routes": "Linky"
+          }
+        },
+        "settings": {
+          "title": "Nastavenia",
+          "data": {
+            "name": "Názov",
+            "limit": "Počet odchodov",
+            "scan_interval": "Interval obnovy (sekundy, prázdne = predvolený)"
+          }
+        },
+        "reconfigure": {
+          "title": "Upraviť zastávku",
+          "data": {
+            "routes": "Linky",
+            "limit": "Počet odchodov",
+            "scan_interval": "Interval obnovy (sekundy, prázdne = predvolený)"
+          }
+        }
+      },
+      "error": {
+        "invalid_auth": "Neplatný API kľúč.",
+        "cannot_connect": "Nepodarilo sa pripojiť ku Golemio API.",
+        "no_results": "Žiadna zastávka sa nenašla."
+      },
+      "abort": {
+        "already_configured": "Tento API kľúč je už nastavený.",
+        "reconfigure_successful": "Opätovné prihlásenie prebehlo úspešne."
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "description": "Jednotlivé zastávky môžu tento interval prepísať.",
+        "data": {
+          "scan_interval": "Predvolený interval obnovy (sekundy)"
+        }
+      }
+    }
+  },
+  "services": {
+    "refresh": {
+      "name": "Obnoviť",
+      "description": "Okamžite obnoví odchody (všetky zastávky, alebo len vybrané).",
+      "fields": {
+        "entity_id": {
+          "name": "Senzory odchodov",
+          "description": "Senzory na obnovenie. Prázdne = všetky."
+        }
+      }
+    },
+    "get_departures": {
+      "name": "Získať odchody",
+      "description": "Vráti aktuálne odchody z nástupišťa. Zadajte buď senzor, alebo GTFS ID zastávky.",
+      "fields": {
+        "entity_id": {
+          "name": "Senzor odchodov",
+          "description": "Zastávka, linky a limit sa prevezmú z tohto senzora."
+        },
+        "stop_id": {
+          "name": "ID zastávky",
+          "description": "GTFS ID nástupišťa, napr. U1072Z101P."
+        },
+        "config_entry_id": {
+          "name": "Konfiguračný záznam",
+          "description": "Záznam, ktorého API kľúč sa použije (pri ID zastávky). Predvolený je prvý."
+        },
+        "routes": {
+          "name": "Linky",
+          "description": "Iba tieto linky (prázdne = všetky)."
+        },
+        "limit": {
+          "name": "Limit",
+          "description": "Maximálny počet odchodov."
+        }
+      }
+    }
+  }
+}

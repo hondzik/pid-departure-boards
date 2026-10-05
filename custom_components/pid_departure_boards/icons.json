@@ -1,0 +1,10 @@
+{
+  "services": {
+    "refresh": {
+      "service": "mdi:refresh"
+    },
+    "get_departures": {
+      "service": "mdi:bus-clock"
+    }
+  }
+}

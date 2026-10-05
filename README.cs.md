@@ -1,3 +1,4 @@
+# PID Departure Boards → Home Assistant
 
 [English](README.md)
 
@@ -6,3 +7,56 @@
 [![Project Maintenance](https://img.shields.io/badge/maintainer-hondzik-blue.svg?style=for-the-badge)](https://github.com/hondzik)
 ![Github](https://img.shields.io/github/followers/hondzik.svg?style=for-the-badge)
 [![GitHub Activity](https://img.shields.io/github/last-commit/hondzik/pid-departure-boards?style=for-the-badge)](https://github.com/hondzik/pid-departure-boards/commits/main)
+
+## Popis
+
+Home Assistant integrace, která zobrazuje odjezdy Pražské integrované dopravy (PID)
+z vybraných nástupišť. Data pochází z [Golemio API](https://api.golemio.cz/pid/docs/openapi/).
+
+- Jeden **senzor na nástupiště** (zastávka v jednom směru). Stav je čas nejbližšího odjezdu,
+  atribut `departures` obsahuje následujících N odjezdů sledovaných linek.
+- U každého odjezdu je linka, cíl, plánovaný i predikovaný čas, zpoždění v minutách, typ vozidla,
+  příznaky nízkopodlažnosti a klimatizace a příznaky zrušeného spoje, noční, regionální linky
+  a náhradní dopravy. Atribut `infotexts` obsahuje aktuální oznámení (výluky).
+- Služby `pid_departure_boards.refresh` a `pid_departure_boards.get_departures`.
+
+## Instalace
+
+### HACS
+
+1. HACS → Integrace → tři tečky vpravo nahoře → Vlastní repozitáře.
+2. Přidat `https://github.com/hondzik/pid-departure-boards` jako typ „Integrace“.
+3. Nainstalovat „PID Departure Boards“ a restartovat Home Assistant.
+
+### Ručně
+
+Zkopírovat `custom_components/pid_departure_boards` do `<config>/custom_components/pid_departure_boards`
+a restartovat Home Assistant.
+
+## Nastavení
+
+1. Na <https://api.golemio.cz/api-keys> si zdarma vytvořte API klíč.
+2. Nastavení → Zařízení a služby → Přidat integraci → „PID Departure Boards“, zadejte klíč.
+   Výchozí interval obnovy lze změnit v nastavení integrace (výchozí 60 s, minimum 30 s —
+   API povoluje 20 požadavků za 8 sekund na jeden klíč).
+3. Na stránce integrace zvolte **Přidat zastávku**:
+   - vyhledejte zastávku podle názvu (diakritika není nutná),
+   - vyberte nástupiště — každé obsluhuje jeden směr, zobrazuje se jako
+     `nástupiště — cíle (linky)`,
+   - vyberte sledované linky (prázdný výběr = všechny),
+   - nastavte počet odjezdů a případně vlastní interval obnovy pro tuto zastávku.
+
+Linky, počet odjezdů a interval lze později změnit přes **Překonfigurovat**.
+
+## Služby
+
+| Služba | K čemu |
+|---|---|
+| `pid_departure_boards.refresh` | Okamžitá obnova — všechny zastávky, nebo jen zadané senzory. |
+| `pid_departure_boards.get_departures` | Vrátí odjezdy (a oznámení) jako odpověď. Zadejte buď `entity_id` senzoru, nebo GTFS `stop_id`; `routes` a `limit` jsou volitelné přepisy. |
+
+## Poznámky
+
+- Zpoždění je známé jen tehdy, když vozidlo hlásí polohu; jinak se použije plánovaný čas.
+- Seznam zastávek se stáhne jednou a ukládá se na 7 dní.
+- Lovelace karta je v samostatném repozitáři `pid-departure-boards-ui`.

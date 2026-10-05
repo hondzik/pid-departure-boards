@@ -1,0 +1,42 @@
+refresh:
+  fields:
+    entity_id:
+      required: false
+      selector:
+        entity:
+          multiple: true
+          filter:
+            integration: pid_departure_boards
+            domain: sensor
+
+get_departures:
+  fields:
+    entity_id:
+      required: false
+      selector:
+        entity:
+          filter:
+            integration: pid_departure_boards
+            domain: sensor
+    stop_id:
+      required: false
+      example: "U1072Z101P"
+      selector:
+        text:
+    config_entry_id:
+      required: false
+      selector:
+        config_entry:
+          integration: pid_departure_boards
+    routes:
+      required: false
+      example: '["5", "12"]'
+      selector:
+        object:
+    limit:
+      required: false
+      selector:
+        number:
+          min: 1
+          max: 20
+          mode: box

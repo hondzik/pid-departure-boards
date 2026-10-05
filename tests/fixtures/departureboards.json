@@ -1,0 +1,52 @@
+{
+  "stops": [
+    {
+      "stop_id": "U1072Z101P",
+      "stop_name": "Andel",
+      "platform_code": "B",
+      "asw_id": {"node": 1072, "stop": 101}
+    }
+  ],
+  "departures": [
+    {
+      "arrival_timestamp": {"scheduled": "2026-10-05T10:05:00.000Z", "predicted": "2026-10-05T10:06:30.000Z", "minutes": "5"},
+      "departure_timestamp": {"scheduled": "2026-10-05T10:05:00.000Z", "predicted": "2026-10-05T10:06:30.000Z", "minutes": "6"},
+      "delay": {"is_available": true, "minutes": 1, "seconds": 90},
+      "last_stop": {"id": "U1Z1P", "name": "Palmovka"},
+      "route": {"short_name": "5", "type": 0, "is_night": false, "is_regional": false, "is_substitute_transport": false},
+      "stop": {"id": "U1072Z101P", "platform_code": "B"},
+      "trip": {"id": "5_1234_260101", "headsign": "Sidliste Barrandov", "direction": 0, "short_name": null, "is_at_stop": false, "is_canceled": false, "is_wheelchair_accessible": true, "is_air_conditioned": true}
+    },
+    {
+      "arrival_timestamp": {"scheduled": "2026-10-05T10:02:00.000Z", "predicted": null, "minutes": "2"},
+      "departure_timestamp": {"scheduled": "2026-10-05T10:02:00.000Z", "predicted": null, "minutes": "2"},
+      "delay": {"is_available": false, "minutes": null, "seconds": null},
+      "last_stop": null,
+      "route": {"short_name": "12", "type": 0, "is_night": false, "is_regional": false, "is_substitute_transport": true},
+      "stop": {"id": "U1072Z101P", "platform_code": "B"},
+      "trip": {"id": "12_77_260101", "headsign": "Pohorelec", "direction": 1, "short_name": null, "is_at_stop": true, "is_canceled": true, "is_wheelchair_accessible": false, "is_air_conditioned": null}
+    },
+    {
+      "arrival_timestamp": {"scheduled": "2026-10-05T10:20:00.000Z", "predicted": "2026-10-05T10:20:00.000Z", "minutes": "20"},
+      "departure_timestamp": {"scheduled": "2026-10-05T10:20:00.000Z", "predicted": "2026-10-05T10:20:00.000Z", "minutes": "20"},
+      "delay": {"is_available": true, "minutes": 0, "seconds": 0},
+      "last_stop": {"id": "U2Z2P", "name": "Radlicka"},
+      "route": {"short_name": "N91", "type": 3, "is_night": true, "is_regional": true, "is_substitute_transport": false},
+      "stop": {"id": "U1072Z101P", "platform_code": "B"},
+      "trip": {"id": "N91_5_260101", "headsign": "Cerny Most", "direction": 0, "short_name": null, "is_at_stop": false, "is_canceled": false, "is_wheelchair_accessible": true, "is_air_conditioned": false}
+    },
+    {
+      "departure_timestamp": null,
+      "arrival_timestamp": null,
+      "route": {"short_name": "99", "type": 3},
+      "stop": {"id": "U1072Z101P"},
+      "trip": {}
+    }
+  ],
+  "infotexts": [
+    {"text": "Vyluka tramvaje 5", "text_en": "Tram 5 diversion", "valid_from": "2026-10-01T00:00:00Z", "valid_to": "2026-10-31T00:00:00Z", "display_type": "general", "related_stops": ["U1072Z101P"]},
+    {"text": "Cizi zastavka", "text_en": null, "valid_from": null, "valid_to": null, "display_type": "inline", "related_stops": [{"id": "U999Z1P"}]},
+    {"text": "Uz neplati", "text_en": null, "valid_from": "2026-01-01T00:00:00Z", "valid_to": "2026-02-01T00:00:00Z", "display_type": "general", "related_stops": ["U1072Z101P"]},
+    {"text": "Obecny text", "text_en": null, "valid_from": null, "valid_to": null, "display_type": "general", "related_stops": []}
+  ]
+}

@@ -1,1 +1,139 @@
-{}
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "PID Departure Boards",
+        "description": "Enter your Golemio API key. You can create one at {api_keys_url}.",
+        "data": {
+          "api_key": "API key"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate",
+        "description": "Enter your Golemio API key. You can create one at {api_keys_url}.",
+        "data": {
+          "api_key": "API key"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid API key.",
+      "cannot_connect": "Cannot connect to the Golemio API.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "already_configured": "This API key is already configured.",
+      "reauth_successful": "Re-authentication was successful."
+    }
+  },
+  "config_subentries": {
+    "stop": {
+      "initiate_flow": {
+        "user": "Add stop"
+      },
+      "entry_type": "Stop",
+      "step": {
+        "user": {
+          "title": "Find stop",
+          "description": "Enter (a part of) the stop name, e.g. “Anděl”.",
+          "data": {
+            "query": "Stop name"
+          }
+        },
+        "pick": {
+          "title": "Choose stop",
+          "data": {
+            "stop_choice": "Stop"
+          }
+        },
+        "platform": {
+          "title": "Choose platform",
+          "description": "Platform of the stop “{stop_name}” — each one serves one direction. Shown as: platform — destinations (lines).",
+          "data": {
+            "stop_id": "Platform"
+          }
+        },
+        "routes": {
+          "title": "Lines",
+          "description": "Choose the lines to track. Leave empty to track all of them.",
+          "data": {
+            "routes": "Lines"
+          }
+        },
+        "settings": {
+          "title": "Settings",
+          "data": {
+            "name": "Name",
+            "limit": "Number of departures",
+            "scan_interval": "Refresh interval (seconds, empty = default)"
+          }
+        },
+        "reconfigure": {
+          "title": "Reconfigure stop",
+          "data": {
+            "routes": "Lines",
+            "limit": "Number of departures",
+            "scan_interval": "Refresh interval (seconds, empty = default)"
+          }
+        }
+      },
+      "error": {
+        "invalid_auth": "Invalid API key.",
+        "cannot_connect": "Cannot connect to the Golemio API.",
+        "no_results": "No stop found."
+      },
+      "abort": {
+        "already_configured": "This API key is already configured.",
+        "reconfigure_successful": "Re-authentication was successful."
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "description": "Individual stops can override this interval.",
+        "data": {
+          "scan_interval": "Default refresh interval (seconds)"
+        }
+      }
+    }
+  },
+  "services": {
+    "refresh": {
+      "name": "Refresh",
+      "description": "Refreshes departures now (all stops, or only the selected ones).",
+      "fields": {
+        "entity_id": {
+          "name": "Departures sensors",
+          "description": "Sensors to refresh. Leave empty to refresh all."
+        }
+      }
+    },
+    "get_departures": {
+      "name": "Get departures",
+      "description": "Returns current departures of a platform. Provide either a sensor or a GTFS stop ID.",
+      "fields": {
+        "entity_id": {
+          "name": "Departures sensor",
+          "description": "Take the stop, lines and limit from this sensor."
+        },
+        "stop_id": {
+          "name": "Stop ID",
+          "description": "GTFS stop ID of the platform, e.g. U1072Z101P."
+        },
+        "config_entry_id": {
+          "name": "Config entry",
+          "description": "Entry whose API key is used (with a stop ID). Defaults to the first one."
+        },
+        "routes": {
+          "name": "Lines",
+          "description": "Only these lines (empty = all)."
+        },
+        "limit": {
+          "name": "Limit",
+          "description": "Maximum number of departures."
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,7 @@
 __pycache__/
 work/
+.vscode/*
+!.vscode/settings.json
 *.pyc
 .pytest_cache/
 .coverage
