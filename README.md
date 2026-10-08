@@ -19,7 +19,7 @@ for the platforms you choose. Data comes from the [Golemio API](https://api.gole
   vehicle type, low-floor and air-conditioning flags, and cancellation / night / regional /
   replacement-transport flags. The `infotexts` attribute holds current notices (diversions).
 - The sensor also has `latitude` / `longitude` attributes of the platform, so it appears on the
-  Map card.
+  Map card (see [Location](#location)).
 - Services `pid_departure_boards.refresh` and `pid_departure_boards.get_departures`.
 
 ## Installation
@@ -41,8 +41,7 @@ and restart Home Assistant.
 
 1. Create a free API key at <https://api.golemio.cz/api-keys>.
 2. Settings → Devices & services → Add integration → "PID Departure Boards", enter the key.
-   The default refresh interval can be changed in the integration options (60 s by default,
-   minimum 30 s — the API allows 20 requests per 8 seconds per key).
+   Global settings are in the integration options, see [Options](#options).
 3. On the integration page choose **Add stop**:
    - search the stop by name (diacritics are optional),
    - choose the platform — each one serves one direction, shown as
@@ -51,6 +50,48 @@ and restart Home Assistant.
    - set the number of departures and, optionally, a refresh interval for this stop.
 
 Lines, number of departures and interval can be changed later via **Reconfigure**.
+
+## Options
+
+Settings → Devices & services → PID Departure Boards → **Configure**. They apply to the whole
+integration, i.e. to all stops the same way:
+
+| Option | Default | Description |
+|---|---|---|
+| Default refresh interval | 60 s | How often departures are refreshed (minimum 30 s — the API allows 20 requests per 8 seconds per key). A single stop can override it when added or reconfigured. |
+
+Saving the options reloads the integration.
+
+## History (recorder)
+
+The large `departures` and `infotexts` attributes are **never** stored in the Home Assistant
+history — the integration excludes them itself. Only the sensor state (the time of the next
+departure) is recorded.
+
+If you do not want even that, exclude the sensors in the [recorder](https://www.home-assistant.io/integrations/recorder/)
+configuration in `configuration.yaml`. The entity ID is derived from the stop name, e.g.
+`sensor.andel_b`:
+
+```yaml
+recorder:
+  exclude:
+    entities:
+      - sensor.andel_b
+      - sensor.palmovka_a
+```
+
+Entity IDs are not prefixed with the integration name, so `entity_globs` is only practical if you
+rename the sensors to a common prefix. Already stored history is not removed by the exclusion;
+delete it with the `recorder.purge_entities` service.
+
+## Location
+
+Since version **1.1.0** the sensor of each platform has the attributes `latitude` and `longitude`
+(WGS84), taken from the PID stop list when the stop is added. Thanks to them the sensor can be
+shown on the **Map** card.
+
+Stops added **before version 1.1.0 do not have the location** and it is not filled in
+automatically. To add it, remove the stop and add it again (**Add stop**).
 
 ## Services
 

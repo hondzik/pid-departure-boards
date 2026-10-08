@@ -18,7 +18,8 @@ z vybraných nástupišť. Data pochází z [Golemio API](https://api.golemio.cz
 - U každého odjezdu je linka, cíl, plánovaný i predikovaný čas, zpoždění v minutách, typ vozidla,
   příznaky nízkopodlažnosti a klimatizace a příznaky zrušeného spoje, noční, regionální linky
   a náhradní dopravy. Atribut `infotexts` obsahuje aktuální oznámení (výluky).
-- Senzor má také atributy `latitude` / `longitude` nástupiště, takže se zobrazí na kartě Mapa.
+- Senzor má také atributy `latitude` / `longitude` nástupiště, takže se zobrazí na kartě Mapa
+  (viz [Zeměpisná poloha](#zeměpisná-poloha)).
 - Služby `pid_departure_boards.refresh` a `pid_departure_boards.get_departures`.
 
 ## Instalace
@@ -40,8 +41,7 @@ a restartovat Home Assistant.
 
 1. Na <https://api.golemio.cz/api-keys> si zdarma vytvořte API klíč.
 2. Nastavení → Zařízení a služby → Přidat integraci → „PID Departure Boards“, zadejte klíč.
-   Výchozí interval obnovy lze změnit v nastavení integrace (výchozí 60 s, minimum 30 s —
-   API povoluje 20 požadavků za 8 sekund na jeden klíč).
+   Globální nastavení je v možnostech integrace, viz [Možnosti](#možnosti).
 3. Na stránce integrace zvolte **Přidat zastávku**:
    - vyhledejte zastávku podle názvu (diakritika není nutná),
    - vyberte nástupiště — každé obsluhuje jeden směr, zobrazuje se jako
@@ -50,6 +50,47 @@ a restartovat Home Assistant.
    - nastavte počet odjezdů a případně vlastní interval obnovy pro tuto zastávku.
 
 Linky, počet odjezdů a interval lze později změnit přes **Překonfigurovat**.
+
+## Možnosti
+
+Nastavení → Zařízení a služby → PID Departure Boards → **Konfigurovat**. Platí pro celou
+integraci, tedy pro všechny zastávky stejně:
+
+| Možnost | Výchozí | Popis |
+|---|---|---|
+| Výchozí interval obnovy | 60 s | Jak často se odjezdy obnovují (minimum 30 s — API povoluje 20 požadavků za 8 sekund na jeden klíč). Jednotlivá zastávka ho může přepsat při přidání nebo úpravě. |
+
+Uložením možností se integrace znovu načte.
+
+## Historie (recorder)
+
+Velké atributy `departures` a `infotexts` se do historie Home Assistantu **nikdy neukládají** —
+integrace je vyřazuje sama. Zaznamenává se jen stav senzoru (čas nejbližšího odjezdu).
+
+Pokud nechcete ukládat ani ten, vyřaďte senzory v konfiguraci
+[recorderu](https://www.home-assistant.io/integrations/recorder/) v `configuration.yaml`. ID entity
+vzniká z názvu zastávky, např. `sensor.andel_b`:
+
+```yaml
+recorder:
+  exclude:
+    entities:
+      - sensor.andel_b
+      - sensor.palmovka_a
+```
+
+ID entit nemají předponu s názvem integrace, takže `entity_globs` se hodí jen tehdy, když senzory
+přejmenujete na společnou předponu. Už uložená historie se vyřazením nesmaže; smažete ji službou
+`recorder.purge_entities`.
+
+## Zeměpisná poloha
+
+Od verze **1.1.0** má senzor každého nástupiště atributy `latitude` a `longitude` (WGS84),
+které se při přidání zastávky převezmou ze seznamu zastávek PID. Díky nim lze senzor zobrazit
+na kartě **Mapa**.
+
+Zastávky přidané **před verzí 1.1.0 zeměpisnou polohu nemají** a automaticky se nedoplní.
+Pro doplnění zastávku odeberte a přidejte znovu (**Přidat zastávku**).
 
 ## Služby
 
