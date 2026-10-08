@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/hondzik/pid-departure-boards/compare/v1.0.0...v1.1.0) (2026-10-08)
+
+
+### Features
+
+* Refactor StopsCache to include coordinates and update caching logic ([8041117](https://github.com/hondzik/pid-departure-boards/commit/8041117b7fbaf5b1ba8b98f6fb7fe34ee4aba081))
+
 ## 1.0.0 (2026-10-06)
 
 
