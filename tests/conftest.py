@@ -44,6 +44,7 @@ def stops_payload() -> dict:
     def feature(stop_id: str, name: str, platform: str | None, location_type: int = 0):
         return {
             "type": "Feature",
+            "geometry": {"type": "Point", "coordinates": [14.4036, 50.0716]},  # lon, lat
             "properties": {
                 "stop_id": stop_id,
                 "stop_name": name,

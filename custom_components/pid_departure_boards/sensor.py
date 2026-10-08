@@ -11,7 +11,14 @@ from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import CONF_PLATFORM, CONF_STOP_ID, CONF_STOP_NAME, DOMAIN
+from .const import (
+    CONF_LATITUDE,
+    CONF_LONGITUDE,
+    CONF_PLATFORM,
+    CONF_STOP_ID,
+    CONF_STOP_NAME,
+    DOMAIN,
+)
 from .coordinator import PidConfigEntry, PlatformCoordinator
 
 
@@ -57,10 +64,17 @@ class DeparturesSensor(CoordinatorEntity[PlatformCoordinator], SensorEntity):
         data = self.coordinator.data
         subentry_data = self.coordinator.subentry.data
         language = self.hass.config.language
-        return {
+        attributes: dict[str, Any] = {
             "stop_id": subentry_data[CONF_STOP_ID],
             "stop_name": subentry_data.get(CONF_STOP_NAME),
             "platform": subentry_data.get(CONF_PLATFORM),
             "departures": [d.as_dict() for d in data.departures],
             "infotexts": [i.as_dict(language) for i in data.infotexts],
         }
+        # `latitude`/`longitude` způsobí, že se nástupiště zobrazí na mapě
+        if (lat := subentry_data.get(CONF_LATITUDE)) is not None and (
+            lon := subentry_data.get(CONF_LONGITUDE)
+        ) is not None:
+            attributes["latitude"] = lat
+            attributes["longitude"] = lon
+        return attributes

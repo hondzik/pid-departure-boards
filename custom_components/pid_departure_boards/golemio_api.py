@@ -102,7 +102,14 @@ class GolemioClient:
             features = data.get("features") if isinstance(data, dict) else None
             if features is None:
                 raise GolemioConnectionError("unexpected response")
-            stops.extend(f["properties"] for f in features if "properties" in f)
+            for feature in features:
+                if "properties" not in feature:
+                    continue
+                props = dict(feature["properties"])
+                coords = (feature.get("geometry") or {}).get("coordinates")
+                if isinstance(coords, list) and len(coords) >= 2:
+                    props["stop_lon"], props["stop_lat"] = coords[0], coords[1]  # GeoJSON: lon, lat
+                stops.append(props)
             if len(features) < STOPS_PAGE_SIZE:
                 return stops
             offset += STOPS_PAGE_SIZE

@@ -18,6 +18,8 @@ for the platforms you choose. Data comes from the [Golemio API](https://api.gole
 - Each departure has the line, destination, scheduled and predicted time, delay in minutes,
   vehicle type, low-floor and air-conditioning flags, and cancellation / night / regional /
   replacement-transport flags. The `infotexts` attribute holds current notices (diversions).
+- The sensor also has `latitude` / `longitude` attributes of the platform, so it appears on the
+  Map card.
 - Services `pid_departure_boards.refresh` and `pid_departure_boards.get_departures`.
 
 ## Installation

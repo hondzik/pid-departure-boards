@@ -58,12 +58,23 @@ async def test_sensor_state_and_attributes(hass: HomeAssistant, freezer) -> None
     assert state.state == "2026-10-05T10:02:00+00:00"
     assert state.attributes["stop_id"] == STOP_ID
     assert state.attributes["platform"] == "B"
+    assert "latitude" not in state.attributes  # make_entry() bez souřadnic
     assert [d["route"] for d in state.attributes["departures"]] == ["12", "5", "N91"]
     # jazyk `hass` v testech je en → anglická verze, pokud existuje
     assert [i["text"] for i in state.attributes["infotexts"]] == [
         "Tram 5 diversion",
         "Obecny text",
     ]
+
+
+@pytest.mark.usefixtures("mock_api")
+async def test_sensor_exposes_coordinates_for_map(hass: HomeAssistant, freezer) -> None:
+    freezer.move_to(NOW)
+    await setup(hass, make_entry(latitude=50.0716, longitude=14.4036))
+
+    state = hass.states.get("sensor.andel_b")
+    assert state.attributes["latitude"] == 50.0716
+    assert state.attributes["longitude"] == 14.4036
 
 
 @pytest.mark.usefixtures("mock_api")

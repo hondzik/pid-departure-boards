@@ -49,6 +49,19 @@ async def test_stale_store_is_refreshed(hass, mock_api, cache, hass_storage) -> 
     assert stops_calls(mock_api) == 2
 
 
+async def test_cache_without_coordinates_is_refetched(
+    hass, mock_api, cache, hass_storage
+) -> None:
+    await cache.async_get_index()
+    for stop in hass_storage["pid_departure_boards.stops"]["data"]["stops"]:
+        del stop["lat"], stop["lon"]  # formát cache před přidáním souřadnic
+
+    other = StopsCache(hass, GolemioClient(async_get_clientsession(hass), "k"))
+    index = await other.async_get_index()
+    assert stops_calls(mock_api) == 2
+    assert index.coordinates("U1072Z101P") == (50.0716, 14.4036)
+
+
 async def test_force_refresh(hass, mock_api, cache) -> None:
     await cache.async_get_index()
     await cache.async_get_index(force=True)

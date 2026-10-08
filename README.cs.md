@@ -18,6 +18,7 @@ z vybraných nástupišť. Data pochází z [Golemio API](https://api.golemio.cz
 - U každého odjezdu je linka, cíl, plánovaný i predikovaný čas, zpoždění v minutách, typ vozidla,
   příznaky nízkopodlažnosti a klimatizace a příznaky zrušeného spoje, noční, regionální linky
   a náhradní dopravy. Atribut `infotexts` obsahuje aktuální oznámení (výluky).
+- Senzor má také atributy `latitude` / `longitude` nástupiště, takže se zobrazí na kartě Mapa.
 - Služby `pid_departure_boards.refresh` a `pid_departure_boards.get_departures`.
 
 ## Instalace

@@ -141,6 +141,26 @@ async def test_get_stops_paginates(api, monkeypatch):
     assert [r.query["offset"] for r in api.requests] == ["0", "2"]
 
 
+async def test_get_stops_merges_geometry_into_properties(api):
+    api.routes["/v2/gtfs/stops"] = (
+        200,
+        {
+            "features": [
+                {
+                    "geometry": {"type": "Point", "coordinates": [14.4036, 50.0716]},
+                    "properties": {"stop_id": "A"},
+                },
+                {"geometry": None, "properties": {"stop_id": "B"}},
+                {"properties": {"stop_id": "C"}},
+            ]
+        },
+    )
+    stops = await api.client.async_get_stops()
+    # GeoJSON je [lon, lat]
+    assert (stops[0]["stop_lat"], stops[0]["stop_lon"]) == (50.0716, 14.4036)
+    assert "stop_lat" not in stops[1] and "stop_lat" not in stops[2]
+
+
 async def test_get_stops_unexpected_payload(api):
     api.routes["/v2/gtfs/stops"] = (200, {"nope": 1})
     with pytest.raises(golemio_api.GolemioConnectionError):

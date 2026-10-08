@@ -29,7 +29,8 @@ class StopsCache:
         if stored and not force:
             updated = dt_util.parse_datetime(stored.get("updated", ""))
             fresh = updated and dt_util.utcnow() - updated < timedelta(days=STOPS_MAX_AGE_DAYS)
-            if fresh and stored.get("stops"):
+            # starší cache bez souřadnic (klíč `lat`) se stáhne znovu
+            if fresh and stored.get("stops") and "lat" in stored["stops"][0]:
                 self._index = StopIndex(stored["stops"])
                 return self._index
 

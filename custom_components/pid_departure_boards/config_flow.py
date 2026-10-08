@@ -34,7 +34,9 @@ from homeassistant.helpers.selector import (
 from .const import (
     API_KEYS_URL,
     CONF_API_KEY,
+    CONF_LATITUDE,
     CONF_LIMIT,
+    CONF_LONGITUDE,
     CONF_NAME,
     CONF_PLATFORM,
     CONF_ROUTES,
@@ -368,6 +370,8 @@ class StopSubentryFlow(ConfigSubentryFlow):
             }
             if user_input.get(CONF_SCAN_INTERVAL):
                 data[CONF_SCAN_INTERVAL] = int(user_input[CONF_SCAN_INTERVAL])
+            if self._index and (coords := self._index.coordinates(self._stop_id)):
+                data[CONF_LATITUDE], data[CONF_LONGITUDE] = coords
             return self.async_create_entry(
                 title=user_input[CONF_NAME], data=data, unique_id=self._stop_id
             )

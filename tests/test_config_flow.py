@@ -144,6 +144,8 @@ async def test_add_stop_full_flow(hass: HomeAssistant, empty_entry, freezer) -> 
         "routes": ["5", "N91"],
         "limit": 3,
         "scan_interval": 45,
+        "latitude": 50.0716,
+        "longitude": 14.4036,
     }
 
 

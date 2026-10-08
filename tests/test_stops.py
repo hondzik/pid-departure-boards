@@ -59,6 +59,17 @@ def test_search_limit():
     assert index.search("a", limit=2) == ["Anděl", "Andělská"]
 
 
+def test_coordinates():
+    raw = [
+        {**props("U1Z1P", "Anděl", "B"), "stop_lat": 50.0716, "stop_lon": 14.4036},
+        props("U1Z2P", "Anděl", "D"),  # bez souřadnic
+    ]
+    index = stops.StopIndex(stops.slim_stops(raw))
+    assert index.coordinates("U1Z1P") == (50.0716, 14.4036)
+    assert index.coordinates("U1Z2P") is None
+    assert index.coordinates("neexistuje") is None
+
+
 def test_stop_ids_and_platforms():
     index = stops.StopIndex(stops.slim_stops(RAW))
     assert index.stop_ids_for("Anděl") == ["U1Z1P", "U1Z2P"]
