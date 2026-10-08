@@ -24,6 +24,8 @@ z vybraných nástupišť. Data pochází z [Golemio API](https://api.golemio.cz
 
 ### HACS
 
+[![Otevřít v HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=hondzik&repository=pid-departure-boards&category=integration)
+
 1. HACS → Integrace → tři tečky vpravo nahoře → Vlastní repozitáře.
 2. Přidat `https://github.com/hondzik/pid-departure-boards` jako typ „Integrace“.
 3. Nainstalovat „PID Departure Boards“ a restartovat Home Assistant.

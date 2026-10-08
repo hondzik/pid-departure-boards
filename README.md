@@ -24,6 +24,8 @@ for the platforms you choose. Data comes from the [Golemio API](https://api.gole
 
 ### HACS
 
+[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=hondzik&repository=pid-departure-boards&category=integration)
+
 1. HACS → Integrations → three dots → Custom repositories.
 2. Add `https://github.com/hondzik/pid-departure-boards` as an "Integration".
 3. Install "PID Departure Boards" and restart Home Assistant.
