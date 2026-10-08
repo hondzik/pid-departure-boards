@@ -21,6 +21,7 @@ for the platforms you choose. Data comes from the [Golemio API](https://api.gole
 - The sensor also has `latitude` / `longitude` attributes of the platform, so it appears on the
   Map card (see [Location](#location)).
 - Services `pid_departure_boards.refresh` and `pid_departure_boards.get_departures`.
+- A ready-made dashboard card is available — see [Dashboard card](#dashboard-card).
 
 ## Installation
 
@@ -93,6 +94,25 @@ shown on the **Map** card.
 Stops added **before version 1.1.0 do not have the location** and it is not filled in
 automatically. To add it, remove the stop and add it again (**Add stop**).
 
+## Dashboard card
+
+To display the departures there is a separate Lovelace card,
+[**pid-departure-boards-ui**](https://github.com/hondzik/pid-departure-boards-ui). It reads the
+sensors of this integration (it never calls the Golemio API itself) and shows the stop name,
+a row per departure with the vehicle icon, line, destination, countdown / departure time, delay,
+wheelchair and air-conditioning icons, notices and a map of the stop.
+
+[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=hondzik&repository=pid-departure-boards-ui&category=plugin)
+
+Install it through HACS as a **Dashboard** (plugin) repository and add it to a dashboard:
+
+```yaml
+type: custom:pid-departure-boards-ui-departures-card
+entity: sensor.andel_b
+```
+
+See the card's [README](https://github.com/hondzik/pid-departure-boards-ui#readme) for all options.
+
 ## Services
 
 | Service | Purpose |
@@ -104,4 +124,3 @@ automatically. To add it, remove the stop and add it again (**Add stop**).
 
 - Delay is only known when the vehicle reports its position; otherwise the scheduled time is used.
 - The list of stops is downloaded once and cached for 7 days.
-- The Lovelace card lives in a separate repository, `pid-departure-boards-ui`.

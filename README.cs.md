@@ -21,6 +21,7 @@ z vybraných nástupišť. Data pochází z [Golemio API](https://api.golemio.cz
 - Senzor má také atributy `latitude` / `longitude` nástupiště, takže se zobrazí na kartě Mapa
   (viz [Zeměpisná poloha](#zeměpisná-poloha)).
 - Služby `pid_departure_boards.refresh` a `pid_departure_boards.get_departures`.
+- K zobrazení je k dispozici hotová karta na dashboard — viz [Karta na dashboard](#karta-na-dashboard).
 
 ## Instalace
 
@@ -92,6 +93,25 @@ na kartě **Mapa**.
 Zastávky přidané **před verzí 1.1.0 zeměpisnou polohu nemají** a automaticky se nedoplní.
 Pro doplnění zastávku odeberte a přidejte znovu (**Přidat zastávku**).
 
+## Karta na dashboard
+
+K zobrazení odjezdů slouží samostatná Lovelace karta
+[**pid-departure-boards-ui**](https://github.com/hondzik/pid-departure-boards-ui). Čte senzory
+této integrace (Golemio API sama nevolá) a zobrazuje název zastávky, řádek pro každý odjezd s ikonou
+vozidla, linkou, cílem, odpočtem / časem odjezdu, zpožděním, ikonami bezbariérovosti a klimatizace,
+oznámení a mapu zastávky.
+
+[![Otevřít v HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=hondzik&repository=pid-departure-boards-ui&category=plugin)
+
+Nainstalujte ji přes HACS jako repozitář typu **Dashboard** (plugin) a přidejte na dashboard:
+
+```yaml
+type: custom:pid-departure-boards-ui-departures-card
+entity: sensor.andel_b
+```
+
+Všechny možnosti jsou v [README karty](https://github.com/hondzik/pid-departure-boards-ui#readme).
+
 ## Služby
 
 | Služba | K čemu |
@@ -103,4 +123,3 @@ Pro doplnění zastávku odeberte a přidejte znovu (**Přidat zastávku**).
 
 - Zpoždění je známé jen tehdy, když vozidlo hlásí polohu; jinak se použije plánovaný čas.
 - Seznam zastávek se stáhne jednou a ukládá se na 7 dní.
-- Lovelace karta je v samostatném repozitáři `pid-departure-boards-ui`.
