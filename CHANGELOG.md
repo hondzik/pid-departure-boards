@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/hondzik/pid-departure-boards/compare/v1.2.0...v1.2.1) (2026-10-13)
+
+
+### Bug Fixes
+
+* Implement authentication failure tracking for Golemio API and update README notes ([acae78e](https://github.com/hondzik/pid-departure-boards/commit/acae78ee150e2def85911de880154a5d85e1774d))
+
 ## [1.2.0](https://github.com/hondzik/pid-departure-boards/compare/v1.1.0...v1.2.0) (2026-10-13)
 
 
