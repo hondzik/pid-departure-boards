@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/hondzik/pid-departure-boards/compare/v1.1.0...v1.2.0) (2026-10-13)
+
+
+### Features
+
+* Add  fixtures for Golemio API integration ([2c720cf](https://github.com/hondzik/pid-departure-boards/commit/2c720cf51f3f7c15c24d6b8a4c935054cc65f732))
+
 ## [1.1.0](https://github.com/hondzik/pid-departure-boards/compare/v1.0.0...v1.1.0) (2026-10-08)
 
 
