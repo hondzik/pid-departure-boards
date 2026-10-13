@@ -129,4 +129,7 @@ vehicles are matched to it by the line and destination.
 ## Notes
 
 - Delay is only known when the vehicle reports its position; otherwise the scheduled time is used.
+- The Golemio API sometimes answers HTTP 401 even for a valid key (for example under heavy load). The sensors
+  then just become unavailable and the integration retries; the re-authentication prompt appears only when the
+  error lasts for 3 minutes in a row.
 - The list of stops is downloaded once and cached for 7 days.

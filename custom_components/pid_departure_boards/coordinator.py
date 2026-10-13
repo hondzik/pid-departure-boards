@@ -12,7 +12,9 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
 
+from .auth_tracker import AuthFailureTracker
 from .const import (
+    AUTH_FAILURE_GRACE_MINUTES,
     CONF_LIMIT,
     CONF_ROUTES,
     CONF_SCAN_INTERVAL,
@@ -102,21 +104,37 @@ class PlatformCoordinator(DataUpdateCoordinator[PlatformData]):
     def stop_id(self) -> str:
         return self.subentry.data[CONF_STOP_ID]
 
+    @property
+    def _auth_tracker(self) -> AuthFailureTracker:
+        """Sdílený pro všechny zastávky a pokusy o setup (`hass.data`), ne per coordinator."""
+        domain_data = self.hass.data.setdefault(DOMAIN, {})
+        if "auth_tracker" not in domain_data:
+            domain_data["auth_tracker"] = AuthFailureTracker(
+                timedelta(minutes=AUTH_FAILURE_GRACE_MINUTES), dt_util.utcnow
+            )
+        return domain_data["auth_tracker"]
+
     async def _async_update_data(self) -> PlatformData:
         data = self.subentry.data
+        entry_id = self.config_entry.entry_id
         try:
-            return await async_fetch_platform(
+            result = await async_fetch_platform(
                 self._client,
                 self.stop_id,
                 set(data.get(CONF_ROUTES) or []),
                 int(data.get(CONF_LIMIT, DEFAULT_LIMIT)),
             )
         except GolemioAuthError as err:
-            raise ConfigEntryAuthFailed(str(err)) from err
+            # Golemio vrací 401 občas i na platný klíč → reauth až při trvalém 401
+            if self._auth_tracker.failed(entry_id):
+                raise ConfigEntryAuthFailed(str(err)) from err
+            raise UpdateFailed(f"Authentication failed ({err}), retrying") from err
         except GolemioRateLimitError as err:
             raise UpdateFailed(f"Rate limit exceeded: {err}") from err
         except GolemioError as err:
             raise UpdateFailed(str(err)) from err
+        self._auth_tracker.ok(entry_id)
+        return result
 
 
 @dataclass

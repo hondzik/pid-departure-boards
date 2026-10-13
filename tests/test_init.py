@@ -97,13 +97,7 @@ async def test_request_uses_token_and_stop(hass: HomeAssistant, mock_api, freeze
     assert "ids%5B%5D=U1072Z101P" in str(url) or "ids[]=U1072Z101P" in str(url)
 
 
-async def test_auth_failure_starts_reauth(hass: HomeAssistant, aioclient_mock) -> None:
-    aioclient_mock.get(f"{API}/v2/pid/departureboards", status=401)
-    entry = make_entry()
-    await setup(hass, entry)
-
-    assert entry.state is ConfigEntryState.SETUP_ERROR
-    assert any(f["context"]["source"] == "reauth" for f in hass.config_entries.flow.async_progress())
+# Chování při HTTP 401 (přechodné vs. trvalé, reauth) je v test_auth_grace.py
 
 
 async def test_api_error_retries_setup(hass: HomeAssistant, aioclient_mock) -> None:

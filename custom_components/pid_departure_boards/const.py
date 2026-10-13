@@ -31,6 +31,9 @@ API_KEYS_URL = "https://api.golemio.cz/api-keys"
 
 # Kolik minut dopředu se odjezdy stahují
 MINUTES_AFTER = 240
+
+# Reauth se spustí, až když HTTP 401 trvá nepřetržitě tuhle dobu (přechodné 401 se tolerují)
+AUTH_FAILURE_GRACE_MINUTES = 3
 # Linky filtrujeme na klientu, proto se z API žádá víc záznamů než limit
 FETCH_LIMIT_FACTOR = 4
 MIN_FETCH_LIMIT = 20

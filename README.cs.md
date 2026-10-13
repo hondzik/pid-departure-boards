@@ -128,4 +128,7 @@ linky a cíle.
 ## Poznámky
 
 - Zpoždění je známé jen tehdy, když vozidlo hlásí polohu; jinak se použije plánovaný čas.
+- Golemio API občas odpoví HTTP 401 i na platný klíč (například při velké zátěži). Senzory se pak jen na chvíli
+  stanou nedostupnými a integrace to zkusí znovu; výzva k novému zadání klíče se zobrazí až tehdy, když chyba trvá
+  3 minuty v kuse.
 - Seznam zastávek se stáhne jednou a ukládá se na 7 dní.
