@@ -1,0 +1,43 @@
+{
+ "features": [
+  {
+   "geometry": {
+    "coordinates": [
+     14.39718,
+     50.06104
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "gtfs_trip_id": "20_17898_261005",
+    "route_type": "tram",
+    "gtfs_route_short_name": "20",
+    "bearing": 73,
+    "delay": 78,
+    "state_position": "at_stop",
+    "vehicle_id": "service-0-8254"
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     14.39357,
+     50.0597
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "gtfs_trip_id": "20_17921_261005",
+    "route_type": "tram",
+    "gtfs_route_short_name": "20",
+    "bearing": 233,
+    "delay": 143,
+    "state_position": "at_stop",
+    "vehicle_id": "service-0-9296"
+   },
+   "type": "Feature"
+  }
+ ],
+ "type": "FeatureCollection"
+}

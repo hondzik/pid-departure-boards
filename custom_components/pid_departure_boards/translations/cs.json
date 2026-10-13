@@ -109,6 +109,26 @@
         }
       }
     },
+    "get_route_shapes": {
+      "name": "Získat trasy linek",
+      "description": "Vrátí trasu (jako zjednodušenou čáru) každé sledované linky senzoru ve směru, který nástupiště obsluhuje.",
+      "fields": {
+        "entity_id": {
+          "name": "Senzor odjezdů",
+          "description": "Senzor nástupiště, jehož sledované linky se použijí."
+        }
+      }
+    },
+    "get_vehicle_positions": {
+      "name": "Získat pozice vozidel",
+      "description": "Vrátí aktuální pozice vozidel sledovaných linek senzoru, která jedou ve směru obsluhovaném nástupištěm.",
+      "fields": {
+        "entity_id": {
+          "name": "Senzor odjezdů",
+          "description": "Senzor nástupiště, jehož sledované linky se použijí."
+        }
+      }
+    },
     "get_departures": {
       "name": "Získat odjezdy",
       "description": "Vrátí aktuální odjezdy z nástupiště. Zadejte buď senzor, nebo GTFS ID zastávky.",

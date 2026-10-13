@@ -18,10 +18,13 @@ from .const import (
     DOMAIN,
     MAX_LIMIT,
     SERVICE_GET_DEPARTURES,
+    SERVICE_GET_ROUTE_SHAPES,
+    SERVICE_GET_VEHICLE_POSITIONS,
     SERVICE_REFRESH,
 )
 from .coordinator import PidConfigEntry, PlatformCoordinator, async_fetch_platform
 from .golemio_api import GolemioError
+from .models import filter_vehicles, route_sort_key
 
 ATTR_ENTITY_ID = "entity_id"
 ATTR_STOP_ID = "stop_id"
@@ -38,6 +41,15 @@ GET_DEPARTURES_SCHEMA = vol.Schema(
         vol.Optional(CONF_LIMIT): vol.All(vol.Coerce(int), vol.Range(min=1, max=MAX_LIMIT)),
     }
 )
+
+
+ENTITY_SCHEMA = vol.Schema({vol.Required(ATTR_ENTITY_ID): cv.entity_id})
+
+
+def _sorted_routes(coordinator: PlatformCoordinator) -> list[str]:
+    """Sledované linky nástupiště; prázdný výběr v konfiguraci = všechny linky z odjezdů."""
+    selected = coordinator.subentry.data.get(CONF_ROUTES) or list(coordinator.data.route_trips)
+    return sorted(selected, key=route_sort_key)
 
 
 def _loaded_entries(hass: HomeAssistant) -> list[PidConfigEntry]:
@@ -104,7 +116,74 @@ def async_setup_services(hass: HomeAssistant) -> None:
             "infotexts": [i.as_dict(language) for i in result.infotexts],
         }
 
+    async def handle_get_route_shapes(call: ServiceCall) -> dict[str, Any]:
+        coordinator = _coordinator_for_entity(hass, call.data[ATTR_ENTITY_ID])
+        shapes_cache = coordinator.config_entry.runtime_data.shapes_cache
+        routes = []
+        for route in _sorted_routes(coordinator):
+            reference = coordinator.data.route_trips.get(route)
+            if reference is None:  # linka bez odjezdu v okně → neznáme spoj, ani trasu
+                routes.append(
+                    {"route": route, "headsign": None, "shape_id": None, "coordinates": None}
+                )
+                continue
+            trip_id, headsign = reference
+            try:
+                shape = await shapes_cache.async_get_route_shape(trip_id)
+            except GolemioError as err:
+                raise HomeAssistantError(f"Golemio API error: {err}") from err
+            routes.append(
+                {
+                    "route": route,
+                    "headsign": shape.headsign or headsign,
+                    "shape_id": shape.shape_id,
+                    "coordinates": shape.coordinates,
+                }
+            )
+        return {"stop_id": coordinator.stop_id, "routes": routes}
+
+    async def handle_get_vehicle_positions(call: ServiceCall) -> dict[str, Any]:
+        coordinator = _coordinator_for_entity(hass, call.data[ATTR_ENTITY_ID])
+        vehicles_cache = coordinator.config_entry.runtime_data.vehicles_cache
+        vehicles: list[dict[str, Any]] = []
+        without_reference: list[str] = []
+        fetched_times = []
+        for route in _sorted_routes(coordinator):
+            reference = coordinator.data.route_trips.get(route)
+            if reference is None or reference[1] is None:
+                # bez referenčního spoje neznáme směr → vozidla neukazujeme
+                without_reference.append(route)
+                continue
+            try:
+                route_vehicles, fetched = await vehicles_cache.async_get(route)
+            except GolemioError as err:
+                raise HomeAssistantError(f"Golemio API error: {err}") from err
+            fetched_times.append(fetched)
+            vehicles += [
+                v.as_dict() for v in filter_vehicles(route_vehicles, route, reference[1])
+            ]
+        return {
+            "stop_id": coordinator.stop_id,
+            "updated": min(fetched_times).isoformat() if fetched_times else None,
+            "vehicles": vehicles,
+            "routes_without_reference": without_reference,
+        }
+
     hass.services.async_register(DOMAIN, SERVICE_REFRESH, handle_refresh, schema=REFRESH_SCHEMA)
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_GET_ROUTE_SHAPES,
+        handle_get_route_shapes,
+        schema=ENTITY_SCHEMA,
+        supports_response=SupportsResponse.ONLY,
+    )
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_GET_VEHICLE_POSITIONS,
+        handle_get_vehicle_positions,
+        schema=ENTITY_SCHEMA,
+        supports_response=SupportsResponse.ONLY,
+    )
     hass.services.async_register(
         DOMAIN,
         SERVICE_GET_DEPARTURES,

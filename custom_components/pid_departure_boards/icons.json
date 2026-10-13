@@ -5,6 +5,12 @@
     },
     "get_departures": {
       "service": "mdi:bus-clock"
+    },
+    "get_route_shapes": {
+      "service": "mdi:map-marker-path"
+    },
+    "get_vehicle_positions": {
+      "service": "mdi:bus-marker"
     }
   }
 }

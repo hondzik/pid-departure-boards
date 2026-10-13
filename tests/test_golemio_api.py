@@ -165,3 +165,88 @@ async def test_get_stops_unexpected_payload(api):
     api.routes["/v2/gtfs/stops"] = (200, {"nope": 1})
     with pytest.raises(golemio_api.GolemioConnectionError):
         await api.client.async_get_stops()
+
+
+# ---- trasy, pozice vozidel, limiter ----
+
+REAL = Path(__file__).parent / "fixtures" / "golemio_real"
+
+
+def _real(name: str):
+    return json.loads((REAL / name).read_text("utf-8"))
+
+
+async def test_get_trip_without_shapes(api):
+    api.routes["/v2/gtfs/trips/20_17883_261005"] = (200, {"trip_id": "20_17883_261005", "shape_id": "L20V2"})
+    data = await api.client.async_get_trip("20_17883_261005")
+    assert data["shape_id"] == "L20V2"
+    assert not api.requests[0].query  # bez includeShapes → malá odpověď
+
+
+async def test_get_shape(api):
+    api.routes["/v2/gtfs/shapes/L20V2"] = (200, _real("shape.json"))
+    data = await api.client.async_get_shape("L20V2")
+    assert len(data["features"]) == 3
+    assert api.requests[0].headers["X-Access-Token"] == "secret-key"
+
+
+async def test_get_vehicle_positions(api):
+    api.routes["/v2/vehiclepositions"] = (200, _real("vehiclepositions.json"))
+    data = await api.client.async_get_vehicle_positions("20")
+    assert data["features"]
+    assert api.requests[0].query["routeShortName"] == "20"
+    assert api.requests[0].query["limit"] == "200"
+
+
+@pytest.mark.parametrize(
+    "call",
+    [
+        lambda c: c.async_get_trip("t"),
+        lambda c: c.async_get_shape("s"),
+        lambda c: c.async_get_vehicle_positions("20"),
+    ],
+)
+async def test_route_endpoints_reject_unexpected_payload(api, call):
+    for path in ("/v2/gtfs/trips/t", "/v2/gtfs/shapes/s", "/v2/vehiclepositions"):
+        api.routes[path] = (200, ["not", "a", "dict"])
+    with pytest.raises(golemio_api.GolemioConnectionError):
+        await call(api.client)
+
+
+async def test_rate_limiter_allows_calls_within_window():
+    limiter = golemio_api.RateLimiter(max_calls=3, period=60, max_wait=0)
+    for _ in range(3):
+        await limiter.acquire()  # nečeká, nevyhazuje
+
+
+async def test_rate_limiter_raises_when_wait_exceeds_max_wait():
+    limiter = golemio_api.RateLimiter(max_calls=2, period=60, max_wait=1)
+    await limiter.acquire()
+    await limiter.acquire()
+    with pytest.raises(golemio_api.GolemioRateLimitError):
+        await limiter.acquire()
+
+
+async def test_rate_limiter_waits_for_a_free_slot():
+    import time
+
+    limiter = golemio_api.RateLimiter(max_calls=2, period=0.2, max_wait=5)
+    started = time.monotonic()
+    for _ in range(3):
+        await limiter.acquire()
+    assert time.monotonic() - started >= 0.18  # třetí volání počkalo na uvolnění okna
+
+
+async def test_client_uses_rate_limiter():
+    class Blocking(golemio_api.RateLimiter):
+        calls = 0
+
+        async def acquire(self):
+            Blocking.calls += 1
+            raise golemio_api.GolemioRateLimitError("limited")
+
+    async with aiohttp.ClientSession() as session:
+        client = golemio_api.GolemioClient(session, "k", rate_limiter=Blocking())
+        with pytest.raises(golemio_api.GolemioRateLimitError):
+            await client.async_get_trip("t")
+    assert Blocking.calls == 1

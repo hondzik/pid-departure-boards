@@ -36,10 +36,22 @@ FETCH_LIMIT_FACTOR = 4
 MIN_FETCH_LIMIT = 20
 
 STOPS_STORAGE_VERSION = 1
+
+# Trasy a pozice vozidel
+SHAPES_STORAGE_VERSION = 1
+SHAPES_MAX_AGE_DAYS = 7  # GTFS platí ~12 dní, endpointy mají s-maxage 4 h
+SHAPE_SIMPLIFY_TOLERANCE_M = 5.0
+VEHICLES_CACHE_TTL = 5.0  # s — stejně cachuje API
+# Rate limit Golemio: 20 požadavků / 8 s na token; necháváme rezervu
+RATE_LIMIT_CALLS = 18
+RATE_LIMIT_PERIOD = 8.0
+RATE_LIMIT_MAX_WAIT = 10.0
 STOPS_MAX_AGE_DAYS = 7
 
 SERVICE_REFRESH = "refresh"
 SERVICE_GET_DEPARTURES = "get_departures"
+SERVICE_GET_ROUTE_SHAPES = "get_route_shapes"
+SERVICE_GET_VEHICLE_POSITIONS = "get_vehicle_positions"
 
 # GTFS route_type
 ROUTE_TYPES: dict[int, str] = {

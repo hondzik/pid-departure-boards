@@ -1,0 +1,141 @@
+{
+ "features": [
+  {
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     14.32241,
+     50.09268
+    ]
+   },
+   "properties": {
+    "last_position": {
+     "bearing": 84,
+     "delay": {
+      "actual": 75,
+      "last_stop_arrival": 40,
+      "last_stop_departure": null
+     },
+     "is_canceled": null,
+     "last_stop": {
+      "arrival_time": "2026-10-13T15:50:00+02:00",
+      "departure_time": "2026-10-13T15:50:00+02:00",
+      "id": "U85Z1P",
+      "sequence": 5
+     },
+     "next_stop": {
+      "arrival_time": "2026-10-13T15:51:00+02:00",
+      "departure_time": "2026-10-13T15:51:00+02:00",
+      "id": "U868Z1P",
+      "sequence": 6
+     },
+     "origin_timestamp": "2026-10-13T15:50:40+02:00",
+     "shape_dist_traveled": "1.707",
+     "speed": null,
+     "state_position": "at_stop",
+     "tracking": true
+    },
+    "trip": {
+     "agency_name": {
+      "real": "DP PRAHA",
+      "scheduled": "DP PRAHA"
+     },
+     "cis": {
+      "line_id": null,
+      "trip_number": null
+     },
+     "gtfs": {
+      "route_id": "L20",
+      "route_short_name": "20",
+      "route_type": 0,
+      "trip_headsign": "Radlická",
+      "trip_id": "20_18003_261005",
+      "trip_short_name": null
+     },
+     "origin_route_name": "20",
+     "sequence_id": 10,
+     "start_timestamp": "2026-10-13T15:46:00+02:00",
+     "vehicle_registration_number": 8177,
+     "vehicle_type": {
+      "description_cs": "tramvaj",
+      "description_en": "tram",
+      "id": 2
+     },
+     "wheelchair_accessible": false,
+     "air_conditioned": false,
+     "usb_chargers": false
+    }
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     14.4084,
+     50.09629
+    ]
+   },
+   "properties": {
+    "last_position": {
+     "bearing": 338,
+     "delay": {
+      "actual": 325,
+      "last_stop_arrival": 282,
+      "last_stop_departure": 367
+     },
+     "is_canceled": null,
+     "last_stop": {
+      "arrival_time": "2026-10-13T15:44:00+02:00",
+      "departure_time": "2026-10-13T15:44:00+02:00",
+      "id": "U187Z2P",
+      "sequence": 15
+     },
+     "next_stop": {
+      "arrival_time": "2026-10-13T15:47:00+02:00",
+      "departure_time": "2026-10-13T15:47:00+02:00",
+      "id": "U163Z2P",
+      "sequence": 16
+     },
+     "origin_timestamp": "2026-10-13T15:50:07+02:00",
+     "shape_dist_traveled": "7.615",
+     "speed": null,
+     "state_position": "on_track",
+     "tracking": true
+    },
+    "trip": {
+     "agency_name": {
+      "real": "DP PRAHA",
+      "scheduled": "DP PRAHA"
+     },
+     "cis": {
+      "line_id": null,
+      "trip_number": null
+     },
+     "gtfs": {
+      "route_id": "L20",
+      "route_short_name": "20",
+      "route_type": 0,
+      "trip_headsign": "Dědina",
+      "trip_id": "20_18058_261005",
+      "trip_short_name": null
+     },
+     "origin_route_name": "20",
+     "sequence_id": 14,
+     "start_timestamp": "2026-10-13T15:21:00+02:00",
+     "vehicle_registration_number": 9402,
+     "vehicle_type": {
+      "description_cs": "tramvaj",
+      "description_en": "tram",
+      "id": 2
+     },
+     "wheelchair_accessible": true,
+     "air_conditioned": true,
+     "usb_chargers": false
+    }
+   },
+   "type": "Feature"
+  }
+ ],
+ "type": "FeatureCollection"
+}

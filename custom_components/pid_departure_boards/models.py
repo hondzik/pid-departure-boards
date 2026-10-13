@@ -192,3 +192,146 @@ def filter_departures(
     selected = [d for d in departures if not routes or d.route in routes]
     selected.sort(key=lambda d: d.departure_time)
     return selected[:limit]
+
+
+def route_sort_key(route: str) -> tuple[int, int, str]:
+    """Číselné linky podle čísla, ostatní (N91, X1) abecedně za nimi."""
+    return (0, int(route), "") if route.isdigit() else (1, 0, route)
+
+
+def reference_trips(
+    departures: list[Departure], routes: set[str] | frozenset[str]
+) -> dict[str, tuple[str, str | None]]:
+    """Linka → (`trip_id`, cíl) nejbližšího odjezdu z nástupiště.
+
+    Spoj odjíždějící z tohoto nástupiště jede z definice sledovaným směrem; podle něj se
+    určuje trasa a směr vozidel. Zrušený spoj se bere jen jako poslední možnost. Prázdný
+    výběr linek = všechny linky z odjezdů.
+    """
+    chosen: dict[str, Departure] = {}
+    for dep in sorted(departures, key=lambda d: (d.canceled, d.departure_time)):
+        if not dep.trip_id or not dep.route or (routes and dep.route not in routes):
+            continue
+        chosen.setdefault(dep.route, dep)
+    return {route: (dep.trip_id, dep.headsign) for route, dep in chosen.items()}
+
+
+@dataclass(frozen=True)
+class TripInfo:
+    """Údaje GTFS spoje potřebné pro trasu."""
+
+    trip_id: str
+    shape_id: str | None
+    direction_id: int | None
+    headsign: str | None
+
+
+def parse_trip_info(data: dict[str, Any]) -> TripInfo | None:
+    """`GET /v2/gtfs/trips/{id}` (bez `includeShapes`)."""
+    if not isinstance(data, dict) or not data.get("trip_id"):
+        return None
+    direction = data.get("direction_id")
+    return TripInfo(
+        trip_id=data["trip_id"],
+        shape_id=data.get("shape_id"),
+        direction_id=direction if isinstance(direction, int) else None,
+        headsign=data.get("trip_headsign"),
+    )
+
+
+def parse_shape_points(data: dict[str, Any]) -> list[tuple[float, float]]:
+    """Body trasy `(lon, lat)` podle `shape_pt_sequence` z `GET /v2/gtfs/shapes/{id}`."""
+    points: list[tuple[int, float, float]] = []
+    for feature in data.get("features") or []:
+        coords = (feature.get("geometry") or {}).get("coordinates")
+        sequence = (feature.get("properties") or {}).get("shape_pt_sequence")
+        if isinstance(coords, list) and len(coords) >= 2 and isinstance(sequence, int):
+            points.append((sequence, float(coords[0]), float(coords[1])))
+    points.sort()
+    return [(lon, lat) for _, lon, lat in points]
+
+
+@dataclass(frozen=True)
+class RouteShape:
+    """Zjednodušená trasa spoje; `coordinates` jsou `[lon, lat]` jako v GeoJSON."""
+
+    shape_id: str
+    headsign: str | None
+    direction_id: int | None
+    coordinates: list[list[float]]
+
+
+@dataclass(frozen=True)
+class Vehicle:
+    """Poloha vozidla."""
+
+    vehicle_id: str | None
+    route: str
+    trip_id: str | None
+    headsign: str | None
+    latitude: float
+    longitude: float
+    bearing: int | None
+    delay_min: int | None
+    state: str | None  # at_stop | on_track
+    canceled: bool
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "vehicle_id": self.vehicle_id,
+            "route": self.route,
+            "trip_id": self.trip_id,
+            "headsign": self.headsign,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
+            "bearing": self.bearing,
+            "delay_min": self.delay_min,
+            "state": self.state,
+            "canceled": self.canceled,
+        }
+
+
+def parse_vehicle(feature: dict[str, Any]) -> Vehicle | None:
+    """Jedno vozidlo z `GET /v2/vehiclepositions`; bez platné polohy vrací `None`."""
+    coords = (feature.get("geometry") or {}).get("coordinates")
+    if not (isinstance(coords, list) and len(coords) >= 2):
+        return None
+    props = feature.get("properties") or {}
+    last = props.get("last_position") or {}
+    trip = props.get("trip") or {}
+    gtfs = trip.get("gtfs") or {}
+
+    delay_s = (last.get("delay") or {}).get("actual")
+    bearing = last.get("bearing")
+    registration = trip.get("vehicle_registration_number")
+    return Vehicle(
+        vehicle_id=str(registration) if registration is not None else None,
+        route=str(gtfs.get("route_short_name") or ""),
+        trip_id=gtfs.get("trip_id"),
+        headsign=gtfs.get("trip_headsign"),
+        longitude=float(coords[0]),  # GeoJSON: lon, lat
+        latitude=float(coords[1]),
+        bearing=int(bearing) if isinstance(bearing, (int, float)) else None,
+        delay_min=round(delay_s / 60) if isinstance(delay_s, (int, float)) else None,
+        state=last.get("state_position"),
+        canceled=bool(last.get("is_canceled")),
+    )
+
+
+def parse_vehicles(data: dict[str, Any]) -> list[Vehicle]:
+    vehicles = (parse_vehicle(f) for f in data.get("features") or [])
+    return [v for v in vehicles if v is not None]
+
+
+def filter_vehicles(vehicles: list[Vehicle], route: str, headsign: str | None) -> list[Vehicle]:
+    """Vozidla dané linky jedoucí k danému cíli (= stejným směrem jako referenční spoj)."""
+    wanted = _normalize_headsign(headsign)
+    return [
+        v
+        for v in vehicles
+        if v.route == route and (wanted is None or _normalize_headsign(v.headsign) == wanted)
+    ]
+
+
+def _normalize_headsign(headsign: str | None) -> str | None:
+    return " ".join(headsign.split()).casefold() if headsign and headsign.strip() else None

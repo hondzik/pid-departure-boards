@@ -109,6 +109,26 @@
         }
       }
     },
+    "get_route_shapes": {
+      "name": "Get route shapes",
+      "description": "Returns the route (as a simplified line) of each tracked line of the sensor, in the direction served by the platform.",
+      "fields": {
+        "entity_id": {
+          "name": "Departures sensor",
+          "description": "Sensor of the platform whose tracked lines are used."
+        }
+      }
+    },
+    "get_vehicle_positions": {
+      "name": "Get vehicle positions",
+      "description": "Returns current positions of vehicles of the tracked lines of the sensor, heading in the direction served by the platform.",
+      "fields": {
+        "entity_id": {
+          "name": "Departures sensor",
+          "description": "Sensor of the platform whose tracked lines are used."
+        }
+      }
+    },
     "get_departures": {
       "name": "Get departures",
       "description": "Returns current departures of a platform. Provide either a sensor or a GTFS stop ID.",

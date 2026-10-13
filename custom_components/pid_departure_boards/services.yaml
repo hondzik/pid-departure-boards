@@ -40,3 +40,23 @@ get_departures:
           min: 1
           max: 20
           mode: box
+
+get_route_shapes:
+  fields:
+    entity_id:
+      required: true
+      selector:
+        entity:
+          filter:
+            integration: pid_departure_boards
+            domain: sensor
+
+get_vehicle_positions:
+  fields:
+    entity_id:
+      required: true
+      selector:
+        entity:
+          filter:
+            integration: pid_departure_boards
+            domain: sensor

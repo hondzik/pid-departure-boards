@@ -18,7 +18,9 @@ from .const import (
 from .coordinator import PidConfigEntry, PidRuntimeData, PlatformCoordinator
 from .golemio_api import GolemioClient
 from .services import async_setup_services
+from .shapes_cache import ShapesCache
 from .stops_cache import StopsCache
+from .vehicles import VehiclePositionsCache
 
 PLATFORMS = [Platform.SENSOR]
 
@@ -35,7 +37,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: PidConfigEntry) -> bool:
     client = GolemioClient(async_get_clientsession(hass), entry.data[CONF_API_KEY])
     default_interval = entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
 
-    runtime = PidRuntimeData(client=client, stops_cache=StopsCache(hass, client))
+    runtime = PidRuntimeData(
+        client=client,
+        stops_cache=StopsCache(hass, client),
+        shapes_cache=ShapesCache(hass, client),
+        vehicles_cache=VehiclePositionsCache(client),
+    )
     for subentry in entry.subentries.values():
         if subentry.subentry_type != SUBENTRY_TYPE_STOP:
             continue

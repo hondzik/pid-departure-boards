@@ -24,6 +24,7 @@ from .const import (
     MIN_FETCH_LIMIT,
     MINUTES_AFTER,
 )
+from .shapes_cache import ShapesCache
 from .stops_cache import StopsCache
 from .golemio_api import (
     GolemioAuthError,
@@ -31,7 +32,15 @@ from .golemio_api import (
     GolemioError,
     GolemioRateLimitError,
 )
-from .models import Departure, Infotext, filter_departures, parse_departures, parse_infotexts
+from .models import (
+    Departure,
+    Infotext,
+    filter_departures,
+    parse_departures,
+    parse_infotexts,
+    reference_trips,
+)
+from .vehicles import VehiclePositionsCache
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -42,6 +51,8 @@ class PlatformData:
 
     departures: list[Departure] = field(default_factory=list)
     infotexts: list[Infotext] = field(default_factory=list)
+    # linka → (trip_id, cíl) nejbližšího odjezdu; základ pro trasu a směr vozidel
+    route_trips: dict[str, tuple[str, str | None]] = field(default_factory=dict)
 
 
 async def async_fetch_platform(
@@ -56,9 +67,11 @@ async def async_fetch_platform(
         minutes_after=MINUTES_AFTER,
         limit=max(limit * FETCH_LIMIT_FACTOR, MIN_FETCH_LIMIT),
     )
-    departures = filter_departures(parse_departures(raw), routes, limit)
+    parsed = parse_departures(raw)
+    departures = filter_departures(parsed, routes, limit)
     infotexts = parse_infotexts(raw, {stop_id}, dt_util.utcnow())
-    return PlatformData(departures, infotexts)
+    # před ořezem na `limit`, aby linka nezmizela jen proto, že se nevešla mezi odjezdy
+    return PlatformData(departures, infotexts, reference_trips(parsed, routes))
 
 
 class PlatformCoordinator(DataUpdateCoordinator[PlatformData]):
@@ -112,6 +125,8 @@ class PidRuntimeData:
 
     client: GolemioClient
     stops_cache: StopsCache
+    shapes_cache: ShapesCache
+    vehicles_cache: VehiclePositionsCache
     coordinators: dict[str, PlatformCoordinator] = field(default_factory=dict)
 
 

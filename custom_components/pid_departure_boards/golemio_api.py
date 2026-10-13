@@ -3,14 +3,27 @@
 from __future__ import annotations
 
 import asyncio
+from collections import deque
+import time
+from collections.abc import Callable
 from typing import Any
 
 import aiohttp
 
 try:
-    from .const import API_BASE_URL
+    from .const import (
+        API_BASE_URL,
+        RATE_LIMIT_CALLS,
+        RATE_LIMIT_MAX_WAIT,
+        RATE_LIMIT_PERIOD,
+    )
 except ImportError:  # bare-module import v testech
-    from const import API_BASE_URL
+    from const import (
+        API_BASE_URL,
+        RATE_LIMIT_CALLS,
+        RATE_LIMIT_MAX_WAIT,
+        RATE_LIMIT_PERIOD,
+    )
 
 REQUEST_TIMEOUT = 15
 STOPS_PAGE_SIZE = 10000
@@ -32,17 +45,59 @@ class GolemioConnectionError(GolemioError):
     """Síťová chyba, chyba serveru nebo nevalidní odpověď."""
 
 
+class RateLimiter:
+    """Klouzavé okno: nejvýš `max_calls` požadavků za `period` sekund.
+
+    API rate limit v odpovědích neoznamuje, proto se hlídá na straně klienta. Čeká se
+    nejvýš `max_wait` sekund, jinak `GolemioRateLimitError` (mapa nesmí vyhladovět obnovu odjezdů).
+    """
+
+    def __init__(
+        self,
+        max_calls: int = RATE_LIMIT_CALLS,
+        period: float = RATE_LIMIT_PERIOD,
+        max_wait: float = RATE_LIMIT_MAX_WAIT,
+        clock: Callable[[], float] = time.monotonic,
+    ) -> None:
+        self._max_calls = max_calls
+        self._period = period
+        self._max_wait = max_wait
+        self._clock = clock
+        self._calls: deque[float] = deque()
+        self._lock = asyncio.Lock()
+
+    async def acquire(self) -> None:
+        async with self._lock:
+            now = self._clock()
+            while self._calls and now - self._calls[0] >= self._period:
+                self._calls.popleft()
+            if len(self._calls) >= self._max_calls:
+                wait = self._calls[0] + self._period - now
+                if wait > self._max_wait:
+                    raise GolemioRateLimitError("client-side rate limit")
+                await asyncio.sleep(wait)
+                self._calls.popleft()  # nejstarší volání po čekání vypadlo z okna
+                now = self._clock()
+            self._calls.append(now)
+
+
 class GolemioClient:
     """Tenký klient nad aiohttp session."""
 
     def __init__(
-        self, session: aiohttp.ClientSession, api_key: str, base_url: str = API_BASE_URL
+        self,
+        session: aiohttp.ClientSession,
+        api_key: str,
+        base_url: str = API_BASE_URL,
+        rate_limiter: RateLimiter | None = None,
     ) -> None:
         self._session = session
         self._api_key = api_key
         self._base_url = base_url.rstrip("/")
+        self._rate_limiter = rate_limiter or RateLimiter()
 
     async def _get(self, path: str, params: list[tuple[str, str]]) -> Any:
+        await self._rate_limiter.acquire()
         try:
             async with asyncio.timeout(REQUEST_TIMEOUT):
                 async with self._session.get(
@@ -82,6 +137,30 @@ class GolemioClient:
         if route_filter:
             params.append(("filter", route_filter))
         data = await self._get("/v2/pid/departureboards", params)
+        if not isinstance(data, dict):
+            raise GolemioConnectionError("unexpected response")
+        return data
+
+    async def async_get_trip(self, trip_id: str) -> dict[str, Any]:
+        """`GET /v2/gtfs/trips/{id}` bez tras (~0,3 kB): `shape_id`, `direction_id`, `trip_headsign`."""
+        data = await self._get(f"/v2/gtfs/trips/{trip_id}", [])
+        if not isinstance(data, dict):
+            raise GolemioConnectionError("unexpected response")
+        return data
+
+    async def async_get_shape(self, shape_id: str) -> dict[str, Any]:
+        """`GET /v2/gtfs/shapes/{id}` — `FeatureCollection` bodů trasy."""
+        data = await self._get(f"/v2/gtfs/shapes/{shape_id}", [])
+        if not isinstance(data, dict):
+            raise GolemioConnectionError("unexpected response")
+        return data
+
+    async def async_get_vehicle_positions(self, route_short_name: str) -> dict[str, Any]:
+        """`GET /v2/vehiclepositions` — pozice vozidel jedné linky (`FeatureCollection`)."""
+        data = await self._get(
+            "/v2/vehiclepositions",
+            [("routeShortName", route_short_name), ("limit", "200")],
+        )
         if not isinstance(data, dict):
             raise GolemioConnectionError("unexpected response")
         return data

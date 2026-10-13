@@ -52,7 +52,7 @@ from .const import (
     SUBENTRY_TYPE_STOP,
 )
 from .golemio_api import GolemioAuthError, GolemioClient, GolemioError
-from .models import parse_departures
+from .models import parse_departures, route_sort_key
 from .stops import StopIndex
 from .stops_cache import StopsCache
 
@@ -81,11 +81,6 @@ def _limit_selector() -> NumberSelector:
     return NumberSelector(
         NumberSelectorConfig(min=1, max=MAX_LIMIT, step=1, mode=NumberSelectorMode.BOX)
     )
-
-
-def _route_sort_key(route: str) -> tuple[int, int, str]:
-    """Číselné linky podle čísla, ostatní (N91, X1) abecedně za nimi."""
-    return (0, int(route), "") if route.isdigit() else (1, 0, route)
 
 
 async def _validate_key(hass, api_key: str) -> str | None:
@@ -196,7 +191,7 @@ class _PlatformInfo:
     def label(self) -> str:
         name = f"{self.code} — " if self.code else ""
         headsigns = ", ".join(sorted(self.headsigns)[:3]) or "—"
-        routes = ", ".join(sorted(self.routes, key=_route_sort_key)[:8])
+        routes = ", ".join(sorted(self.routes, key=route_sort_key)[:8])
         return f"{name}{headsigns} ({routes})" if routes else f"{name}{headsigns}"
 
 
@@ -309,7 +304,7 @@ class StopSubentryFlow(ConfigSubentryFlow):
                 s.unique_id == self._stop_id for s in self._get_entry().subentries.values()
             ):
                 return self.async_abort(reason="already_configured")
-            self._routes = sorted(self._platforms[self._stop_id].routes, key=_route_sort_key)
+            self._routes = sorted(self._platforms[self._stop_id].routes, key=route_sort_key)
             return await self.async_step_routes()
 
         options = [
@@ -421,7 +416,7 @@ class StopSubentryFlow(ConfigSubentryFlow):
                 CONF_ROUTES, default=list(current.get(CONF_ROUTES) or [])
             ): SelectSelector(
                 SelectSelectorConfig(
-                    options=sorted(routes, key=_route_sort_key),
+                    options=sorted(routes, key=route_sort_key),
                     multiple=True,
                     mode=SelectSelectorMode.DROPDOWN,
                 )

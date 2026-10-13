@@ -1,0 +1,65 @@
+{
+ "features": [
+  {
+   "geometry": {
+    "coordinates": [
+     14.403809,
+     50.070015
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "location_type": 1,
+    "parent_station": null,
+    "platform_code": null,
+    "stop_id": "U1040S1",
+    "stop_name": "Anděl",
+    "wheelchair_boarding": 1,
+    "zone_id": "P",
+    "level_id": null
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     14.403631,
+     50.07193
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "location_type": 0,
+    "parent_station": null,
+    "platform_code": "A",
+    "stop_id": "U1040Z1P",
+    "stop_name": "Anděl",
+    "wheelchair_boarding": 1,
+    "zone_id": "P",
+    "level_id": null
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     14.40367,
+     50.070026
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "location_type": 0,
+    "parent_station": "U1040S1",
+    "platform_code": "1",
+    "stop_id": "U1040Z101P",
+    "stop_name": "Anděl",
+    "wheelchair_boarding": 1,
+    "zone_id": "P",
+    "level_id": "U1040L2"
+   },
+   "type": "Feature"
+  }
+ ],
+ "type": "FeatureCollection"
+}

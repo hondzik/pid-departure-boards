@@ -119,6 +119,12 @@ See the card's [README](https://github.com/hondzik/pid-departure-boards-ui#readm
 |---|---|
 | `pid_departure_boards.refresh` | Refresh now — all stops, or only the given sensors. |
 | `pid_departure_boards.get_departures` | Returns departures (and notices) as a response. Give either a `entity_id` of a sensor, or a GTFS `stop_id`; `routes` and `limit` are optional overrides. |
+| `pid_departure_boards.get_route_shapes` | Returns the route (a simplified line of `[lon, lat]` points) of each tracked line of the sensor, in the direction served by the platform. A line with no departure in the next 4 hours has no route (`null`). |
+| `pid_departure_boards.get_vehicle_positions` | Returns current positions (with bearing, delay and state) of the vehicles of the tracked lines that head in the direction served by the platform. Positions are cached for about 5 seconds. |
+
+The route and vehicle services are meant for a map — they take only the `entity_id` of a sensor and use
+its tracked lines. The direction is taken from the nearest departure of each line from the platform;
+vehicles are matched to it by the line and destination.
 
 ## Notes
 

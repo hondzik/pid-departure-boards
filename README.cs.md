@@ -118,6 +118,12 @@ Všechny možnosti jsou v [README karty](https://github.com/hondzik/pid-departur
 |---|---|
 | `pid_departure_boards.refresh` | Okamžitá obnova — všechny zastávky, nebo jen zadané senzory. |
 | `pid_departure_boards.get_departures` | Vrátí odjezdy (a oznámení) jako odpověď. Zadejte buď `entity_id` senzoru, nebo GTFS `stop_id`; `routes` a `limit` jsou volitelné přepisy. |
+| `pid_departure_boards.get_route_shapes` | Vrátí trasu (zjednodušenou čáru z bodů `[lon, lat]`) každé sledované linky senzoru ve směru, který nástupiště obsluhuje. Linka bez odjezdu v následujících 4 hodinách trasu nemá (`null`). |
+| `pid_departure_boards.get_vehicle_positions` | Vrátí aktuální pozice (s azimutem, zpožděním a stavem) vozidel sledovaných linek, která jedou směrem obsluhovaným nástupištěm. Pozice se cachují asi 5 sekund. |
+
+Služby pro trasu a vozidla jsou určené pro mapu — berou jen `entity_id` senzoru a použijí jeho sledované
+linky. Směr se určuje podle nejbližšího odjezdu každé linky z nástupiště; vozidla se k němu přiřazují podle
+linky a cíle.
 
 ## Poznámky
 

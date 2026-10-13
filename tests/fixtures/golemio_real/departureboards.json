@@ -1,0 +1,178 @@
+{
+ "stops": [
+  {
+   "location_type": 0,
+   "parent_station": null,
+   "platform_code": "A",
+   "stop_id": "U1040Z1P",
+   "stop_lat": 50.07193,
+   "stop_lon": 14.403631,
+   "stop_name": "Anděl",
+   "wheelchair_boarding": 1,
+   "zone_id": "P",
+   "level_id": null,
+   "asw_id": {
+    "node": 1040,
+    "stop": 1
+   }
+  }
+ ],
+ "departures": [
+  {
+   "arrival_timestamp": {
+    "predicted": "2026-10-13T15:50:52+02:00",
+    "scheduled": "2026-10-13T15:48:00+02:00"
+   },
+   "delay": {
+    "is_available": true,
+    "minutes": 2,
+    "seconds": 172
+   },
+   "departure_timestamp": {
+    "predicted": "2026-10-13T15:50:52+02:00",
+    "scheduled": "2026-10-13T15:48:00+02:00",
+    "minutes": "<1"
+   },
+   "last_stop": {
+    "id": "U302Z1P",
+    "name": "Křížová"
+   },
+   "route": {
+    "short_name": "20",
+    "type": 0,
+    "is_night": false,
+    "is_regional": false,
+    "is_substitute_transport": false
+   },
+   "stop": {
+    "id": "U1040Z1P",
+    "platform_code": "A"
+   },
+   "trip": {
+    "direction": "left",
+    "headsign": "Dědina",
+    "id": "20_17883_261005",
+    "is_at_stop": false,
+    "is_canceled": false,
+    "is_wheelchair_accessible": true,
+    "is_air_conditioned": false,
+    "short_name": null
+   }
+  },
+  {
+   "arrival_timestamp": {
+    "predicted": "2026-10-13T15:50:59+02:00",
+    "scheduled": "2026-10-13T15:50:00+02:00"
+   },
+   "delay": {
+    "is_available": true,
+    "minutes": 0,
+    "seconds": 59
+   },
+   "departure_timestamp": {
+    "predicted": "2026-10-13T15:50:59+02:00",
+    "scheduled": "2026-10-13T15:50:00+02:00",
+    "minutes": "<1"
+   },
+   "last_stop": {
+    "id": "U1040Z7P",
+    "name": "Na Knížecí"
+   },
+   "route": {
+    "short_name": "12",
+    "type": 0,
+    "is_night": false,
+    "is_regional": false,
+    "is_substitute_transport": false
+   },
+   "stop": {
+    "id": "U1040Z1P",
+    "platform_code": "A"
+   },
+   "trip": {
+    "direction": "left",
+    "headsign": "Lehovec",
+    "id": "12_22200_261005",
+    "is_at_stop": false,
+    "is_canceled": false,
+    "is_wheelchair_accessible": true,
+    "is_air_conditioned": true,
+    "short_name": null
+   }
+  },
+  {
+   "arrival_timestamp": {
+    "predicted": "2026-10-13T15:52:20+02:00",
+    "scheduled": "2026-10-13T15:51:00+02:00"
+   },
+   "delay": {
+    "is_available": true,
+    "minutes": 1,
+    "seconds": 80
+   },
+   "departure_timestamp": {
+    "predicted": "2026-10-13T15:52:20+02:00",
+    "scheduled": "2026-10-13T15:51:00+02:00",
+    "minutes": "1"
+   },
+   "last_stop": {
+    "id": "U4Z2P",
+    "name": "Arbesovo náměstí"
+   },
+   "route": {
+    "short_name": "15",
+    "type": 0,
+    "is_night": false,
+    "is_regional": false,
+    "is_substitute_transport": false
+   },
+   "stop": {
+    "id": "U1040Z4P",
+    "platform_code": "D"
+   },
+   "trip": {
+    "direction": null,
+    "headsign": "Na Knížecí",
+    "id": "15_24617_261005",
+    "is_at_stop": false,
+    "is_canceled": false,
+    "is_wheelchair_accessible": false,
+    "is_air_conditioned": false,
+    "short_name": null
+   }
+  }
+ ],
+ "infotexts": [
+  {
+   "display_type": "inline",
+   "text": "TRAM 16 do 18. 12. zrušena. Nahrazena posílenou TRAM 10.",
+   "text_en": "Tram 16 is cancelled until 18 DEC. Replaced by strengthened tram 10.",
+   "related_stops": [
+    "U1040Z2P",
+    "U1040Z1P"
+   ],
+   "valid_from": "2026-10-11T00:00:00+02:00",
+   "valid_to": "2026-10-14T23:59:00+02:00"
+  },
+  {
+   "display_type": "inline",
+   "text": "Provoz TRAM v úseku Na Knížecí - Smíchovské nádraží do 18. 10. přerušen. Náhradní BUS X12 odjíždí z ul. Bozděchovy.",
+   "text_en": "No tram service between Na Knížecí and Smíchovské nádraží until 18 OCT. Replacement BUS X12 departs from Bozděchova street.",
+   "related_stops": [
+    "U1040Z4P"
+   ],
+   "valid_from": "2026-10-03T00:00:00+02:00",
+   "valid_to": "2026-10-18T23:59:00+02:00"
+  },
+  {
+   "display_type": "general",
+   "text": "Zastávka mimo provoz.\nTRAM odjíždějí ze zastávky v ulici Plzeňské (nástupiště A).",
+   "text_en": "This stop is out of service.\nTrams depart from the stop in Plzeňská street (platform A).",
+   "related_stops": [
+    "U1040Z3P"
+   ],
+   "valid_from": "2026-10-03T00:00:00+02:00",
+   "valid_to": "2026-10-18T23:59:00+02:00"
+  }
+ ]
+}

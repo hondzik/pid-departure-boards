@@ -1,0 +1,50 @@
+{
+ "features": [
+  {
+   "geometry": {
+    "coordinates": [
+     14.389478,
+     50.05902
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "shape_dist_traveled": 0,
+    "shape_id": "L20V2",
+    "shape_pt_sequence": 1
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     14.389505,
+     50.059042
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "shape_dist_traveled": 0.003146,
+    "shape_id": "L20V2",
+    "shape_pt_sequence": 2
+   },
+   "type": "Feature"
+  },
+  {
+   "geometry": {
+    "coordinates": [
+     14.389533,
+     50.059059
+    ],
+    "type": "Point"
+   },
+   "properties": {
+    "shape_dist_traveled": 0.005844,
+    "shape_id": "L20V2",
+    "shape_pt_sequence": 3
+   },
+   "type": "Feature"
+  }
+ ],
+ "type": "FeatureCollection"
+}
